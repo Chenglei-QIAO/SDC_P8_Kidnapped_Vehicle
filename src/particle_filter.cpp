@@ -69,9 +69,9 @@ void ParticleFilter::prediction(double delta_t, double std_pos[],
    *  http://www.cplusplus.com/reference/random/default_random_engine/
    */
   // create normal distribution
-  normal_distribution<double> dist_x(0, std_pos[0]);
-  normal_distribution<double> dist_y(0, std_pos[1]);
-  normal_distribution<double> dist_theta(0, std_pos[2]);
+  normal_distribution<double> dist_x(0.0, std_pos[0]);
+  normal_distribution<double> dist_y(0.0, std_pos[1]);
+  normal_distribution<double> dist_theta(0.0, std_pos[2]);
 
   for(int i = 0; i < num_particles; ++i) {
     if (fabs(yaw_rate) < EPS) {
@@ -106,9 +106,9 @@ void ParticleFilter::dataAssociation(vector<LandmarkObs> predicted,
     double minDistance = numeric_limits<double>::max();
     // initialize the current found landmark
     int closest_landmark = 0;
-    for (unsigned j = 0; j < predicted.size(); ++j) {
-      double xDistance = observations[i].x - predicted[i].x;
-      double yDistance = observations[i].y - predicted[i].y;
+    for (unsigned int j = 0; j < predicted.size(); ++j) {
+      double xDistance = observations[i].x - predicted[j].x;
+      double yDistance = observations[i].y - predicted[j].y;
 
       double distance = sqrt(pow(xDistance, 2) + pow(yDistance, 2));
       // Compare to min distance and update if closest
@@ -205,7 +205,8 @@ void ParticleFilter::resample() {
    * NOTE: You may find std::discrete_distribution helpful here.
    *   http://en.cppreference.com/w/cpp/numeric/random/discrete_distribution
    */
-    // Get weights and max weight.
+  // Get weights and max weight.
+  vector<Particle> resampledParticles;
   vector<double> weights;
   double maxWeight = numeric_limits<double>::min();
   for(int i = 0; i < num_particles; i++) {
@@ -225,7 +226,7 @@ void ParticleFilter::resample() {
   double beta = 0.0;
 
   // the wheel
-  vector<Particle> resampledParticles;
+  
   for(int i = 0; i < num_particles; i++) {
     beta += distDouble(gen) * 2.0;
     while( beta > weights[index]) {
